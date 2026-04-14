@@ -92,15 +92,3 @@ jobs:
           version-type: beta
           files: |
             **/build/libs/*.jar
-
-  notify:
-    name: Notify
-    needs: [ publish_github ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Notify Discord
-        uses: Up-Mods/action-discord-release@main
-        with:
-          version: ${{ env.TAG }}
-          webhook-url: ${{ secrets.ANNOUNCEMENT_WEBHOOK_URL }}
-          ping-notification-role: false
