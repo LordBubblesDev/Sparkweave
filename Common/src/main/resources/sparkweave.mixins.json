@@ -4,16 +4,8 @@
   "package": "dev.upcraft.sparkweave.mixin",
   "plugin": "dev.upcraft.sparkweave.SparkweaveMixinConfigPlugin",
   "compatibilityLevel": "JAVA_${java_version}",
-  "mixins": [
-    "BlockEntityMixin",
-    "LecternBlockEntityMixin",
-    "LecternBlockMixin"
-  ],
-  "client": [
-    "client.LecternRendererMixin",
-    "client.RenderLayerMixin",
-    "client.debug.AbstractContainerScreenMixin"
-  ],
+  "mixins": [],
+  "client": [],
   "injectors": {
     "defaultRequire": 1
 	}

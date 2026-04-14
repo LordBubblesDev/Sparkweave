@@ -5,18 +5,11 @@
   "plugin": "dev.upcraft.sparkweave.SparkweaveMixinConfigPlugin",
   "compatibilityLevel": "JAVA_${java_version}",
   "mixins": [
-    "AbstractContainerMenuMixin",
-    "ArgumentTypeInfosAccessor",
     "EntityMixin",
-    "MappedRegistryMixin",
-    "ServerLevelMixin",
-    "datagen.PackGeneratorAccessor",
-    "datagen.RegistrySetBuilderMixin"
+    "ServerLevelMixin"
   ],
   "client": [
-    "client.ClientLevelMixin",
-    "client.HumanoidArmorLayerMixin",
-    "client.MainMixin"
+    "client.ClientLevelMixin"
   ],
   "injectors": {
     "defaultRequire": 1

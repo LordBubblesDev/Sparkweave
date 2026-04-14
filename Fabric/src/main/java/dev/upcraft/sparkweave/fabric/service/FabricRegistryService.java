@@ -7,11 +7,8 @@ import dev.upcraft.sparkweave.api.registry.RegistryHandler;
 import dev.upcraft.sparkweave.api.registry.RegistryVisitor;
 import dev.upcraft.sparkweave.fabric.impl.registry.FabricRegistryHandler;
 import net.fabricmc.fabric.api.event.registry.RegistryEntryAddedCallback;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-
-import java.util.stream.Collectors;
 
 @AutoService(RegistryService.class)
 public class FabricRegistryService implements RegistryService {
@@ -30,7 +27,7 @@ public class FabricRegistryService implements RegistryService {
 	public <T> void visitRegistry(Registry<T> registry, RegistryVisitor<T> callback) {
 		RegistryEntryAddedCallback.event(registry).register((rawId, id, object) -> callback.accept(id, object));
 		// need to create a copy because the callback itself may add entries to the registry while we are iterating it
-		var copy = registry.holders().collect(Collectors.toMap(holder -> holder.key().location(), Holder.Reference::value));
+		var copy = registry.entrySet().stream().collect(java.util.stream.Collectors.toMap(entry -> entry.getKey().identifier(), java.util.Map.Entry::getValue));
 		copy.forEach(callback);
 	}
 

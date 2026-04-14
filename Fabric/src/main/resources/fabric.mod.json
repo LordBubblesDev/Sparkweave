@@ -61,11 +61,7 @@
 				"library"
 			]
 		},
-		"loom:injected_interfaces": {
-			"net/minecraft/class_7877": [
-				"dev/upcraft/sparkweave/api/ext/datagen/RegistrySetBuilderExt"
-			]
-		}
+		"loom:injected_interfaces": {}
 	},
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",

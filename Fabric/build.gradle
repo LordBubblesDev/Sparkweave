@@ -5,17 +5,13 @@ plugins {
 
 dependencies {
 	minecraft libs.minecraft
-	mappings(loom.layered {
-		it.officialMojangMappings()
-		it.parchment("org.parchmentmc.data:parchment-${libs.versions.parchment.minecraft.get()}:${libs.versions.parchment.mappings.get()}@zip")
-	})
 	compileOnly projects.sparkweaveCommon
 
 	compileOnly libs.autoservice.annotations
 	annotationProcessor libs.autoservice
 
-	modImplementation libs.fabric.loader
-	modImplementation libs.fabric.api
+	implementation libs.fabric.loader
+	implementation libs.fabric.api
 
 	implementation(projects.sparkweaveCommon) {
 		capabilities {
@@ -47,19 +43,19 @@ dependencies {
 	implementation libs.appdirs
 	include libs.appdirs
 
-	modCompileOnly(variantOf(libs.emi.fabric) { classifier 'api' }) {
+	compileOnly(variantOf(libs.emi.fabric) { classifier 'api' }) {
 		transitive = false
 	}
-	modLocalRuntime(libs.emi.fabric) {
-		transitive = false
-	}
+//	runtimeOnly(libs.emi.fabric) {
+//		transitive = false
+//	}
 
-	modCompileOnly(libs.modmenu.fabric) {
+	compileOnly(libs.modmenu.fabric) {
 		transitive = false
 	}
-	modLocalRuntime(libs.modmenu.fabric) {
-		transitive = false
-	}
+//	runtimeOnly(libs.modmenu.fabric) {
+//		transitive = false
+//	}
 
 	testImplementation libs.junit.api
 	testImplementation libs.neoforge.testframework
@@ -77,16 +73,14 @@ loom {
 		"${mod_id}" {
 			// Tell Loom about each source set used by your mod here. This ensures that your mod's classes are properly transformed by Loader.
 			sourceSet sourceSets.main
-			sourceSet projects.sparkweaveCommon.dependencyProject.sourceSets.main
 		}
 
 		"${mod_id}_testmod" {
 			sourceSet sourceSets.testmod
-			sourceSet projects.sparkweaveCommon.dependencyProject.sourceSets.testmod
 		}
 	}
 
-	accessWidenerPath.set(file("src/main/resources/${mod_id}.accesswidener"))
+//	accessWidenerPath.set(file("src/main/resources/${mod_id}.accesswidener"))
 
 	mixin {
 		useLegacyMixinAp.set(false)
@@ -188,6 +182,29 @@ tasks.ideaSyncTask.finalizedBy(tasks.generateDatagenDir)
 tasks.runDatagen.dependsOn(tasks.generateDatagenDir)
 sourceSets.testmod.resources { srcDir "src/testmod/generated" }
 
+sourceSets {
+	main {
+		java {
+			// Keep only APIs/features currently required by Icarus.
+			exclude "dev/upcraft/sparkweave/fabric/client/command/**"
+			exclude "dev/upcraft/sparkweave/fabric/client/consent/**"
+			exclude "dev/upcraft/sparkweave/fabric/entrypoint/DataGenerator.java"
+			exclude "dev/upcraft/sparkweave/fabric/impl/datagen/**"
+			exclude "dev/upcraft/sparkweave/fabric/impl/registry/RegisterBlockEntityRenderersEventImpl.java"
+			exclude "dev/upcraft/sparkweave/fabric/impl/registry/RegisterCustomArmorRenderersEvent.java"
+			exclude "dev/upcraft/sparkweave/fabric/impl/registry/RegisterEntityRenderersEventImpl.java"
+			exclude "dev/upcraft/sparkweave/fabric/impl/registry/RegisterItemPropertiesEventImpl.java"
+			exclude "dev/upcraft/sparkweave/fabric/impl/registry/RegisterMenuScreensEventImpl.java"
+			exclude "dev/upcraft/sparkweave/fabric/impl/registry/RegisterParticleFactoriesEventImpl.java"
+			exclude "dev/upcraft/sparkweave/fabric/mixin/AbstractContainerMenuMixin.java"
+			exclude "dev/upcraft/sparkweave/fabric/mixin/ArgumentTypeInfosAccessor.java"
+			exclude "dev/upcraft/sparkweave/fabric/mixin/datagen/**"
+			exclude "dev/upcraft/sparkweave/fabric/mixin/client/HumanoidArmorLayerMixin.java"
+			exclude "dev/upcraft/sparkweave/fabric/service/FabricHelperService.java"
+		}
+	}
+}
+
 publishing {
 	publications {
 		"mavenJava${project.name}"(MavenPublication) {
@@ -218,33 +235,32 @@ publishing {
 }
 
 tasks.named("compileJava", JavaCompile) {
-	source projects.sparkweaveCommon.dependencyProject.sourceSets.main.allJava
 }
 
 tasks.named("compileTestJava", JavaCompile) {
-	source projects.sparkweaveCommon.dependencyProject.sourceSets.test.allJava
 }
 
 tasks.named("compileTestmodJava", JavaCompile).configure {
-	source projects.sparkweaveCommon.dependencyProject.sourceSets.testmod.allJava
 }
 
 tasks.named("javadoc", Javadoc).configure {
-	source projects.sparkweaveCommon.dependencyProject.sourceSets.main.allJava
 }
 
 tasks.named("sourcesJar", Jar) {
-	from projects.sparkweaveCommon.dependencyProject.sourceSets.main.allSource
+}
+
+jar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from project(":Sparkweave-Common").sourceSets.main.output
 }
 
 processResources {
-	from projects.sparkweaveCommon.dependencyProject.sourceSets.main.resources
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from project(":Sparkweave-Common").sourceSets.main.resources
 }
 
 processTestResources {
-	from projects.sparkweaveCommon.dependencyProject.sourceSets.test.resources
 }
 
 processTestmodResources {
-	from projects.sparkweaveCommon.dependencyProject.sourceSets.testmod.resources
 }

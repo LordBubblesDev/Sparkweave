@@ -2,6 +2,8 @@ plugins {
 	alias libs.plugins.moddevgradle
 }
 
+def commonProject = rootProject.project(":Sparkweave-Common")
+
 // need this before dependencies because it configures the plugin and creates additionalRuntimeClasspath configuration
 neoForge.version = libs.versions.neoforge.get()
 
@@ -44,7 +46,6 @@ dependencies {
 //	implementation libs.resourcefulconfig.neoforge
 
 	implementation libs.appdirs
-	additionalRuntimeClasspath libs.appdirs
 	jarJar(libs.appdirs) {
 		transitive = false
 	}
@@ -73,11 +74,6 @@ test {
 }
 
 neoForge {
-	parchment {
-		minecraftVersion = libs.versions.parchment.minecraft.get()
-		mappingsVersion = libs.versions.parchment.mappings.get()
-	}
-
 	mods {
 		// define mod <-> source bindings
 		// these are used to tell the game which sources are for which mod
@@ -85,16 +81,16 @@ neoForge {
 		// but multi mod projects should define one per mod
 		"${mod_id}" {
 			sourceSet(sourceSets.main)
-			sourceSet(projects.sparkweaveCommon.dependencyProject.sourceSets.main)
+			sourceSet(commonProject.sourceSets.main)
 		}
 
 		"${mod_id}_renderdoc_loader" {
-			sourceSet(projects.sparkweaveCommon.dependencyProject.sourceSets.maybeCreate("renderdoc"))
+			sourceSet(commonProject.sourceSets.maybeCreate("renderdoc"))
 		}
 
 		"${project.mod_id}_testmod" {
 			sourceSet(sourceSets.testmod)
-			sourceSet(projects.sparkweaveCommon.dependencyProject.sourceSets.testmod)
+			sourceSet(commonProject.sourceSets.testmod)
 		}
 	}
 
@@ -172,33 +168,33 @@ neoForge {
 sourceSets.testmod.resources { srcDir "src/testmod/generated" }
 
 tasks.named("compileJava", JavaCompile) {
-	source projects.sparkweaveCommon.dependencyProject.sourceSets.main.allJava
+	source commonProject.sourceSets.main.allJava
 }
 
 tasks.named("compileTestJava", JavaCompile) {
-	source projects.sparkweaveCommon.dependencyProject.sourceSets.test.allJava
+	source commonProject.sourceSets.test.allJava
 }
 
 tasks.named("compileTestmodJava", JavaCompile) {
-	source projects.sparkweaveCommon.dependencyProject.sourceSets.testmod.allJava
+	source commonProject.sourceSets.testmod.allJava
 }
 
 tasks.named("javadoc", Javadoc) {
-	source projects.sparkweaveCommon.dependencyProject.sourceSets.main.allJava
+	source commonProject.sourceSets.main.allJava
 }
 
 tasks.named("sourcesJar", Jar) {
-	from projects.sparkweaveCommon.dependencyProject.sourceSets.main.allSource
+	from commonProject.sourceSets.main.allSource
 }
 
 processResources {
-	from projects.sparkweaveCommon.dependencyProject.sourceSets.main.resources
+	from commonProject.sourceSets.main.resources
 }
 
 processTestResources {
-	from projects.sparkweaveCommon.dependencyProject.sourceSets.test.resources
+	from commonProject.sourceSets.test.resources
 }
 
 processTestmodResources {
-	from projects.sparkweaveCommon.dependencyProject.sourceSets.testmod.resources
+	from commonProject.sourceSets.testmod.resources
 }

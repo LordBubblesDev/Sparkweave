@@ -6,6 +6,33 @@ neoForge.neoFormVersion = libs.versions.neoform.get()
 
 sourceSets {
 	maybeCreate("renderdoc")
+
+	main {
+		java {
+			// 26.1 minimal subset for Icarus: keep core bootstrap, events, and registry APIs only.
+			exclude "dev/upcraft/sparkweave/api/client/render/**"
+			exclude "dev/upcraft/sparkweave/api/command/**"
+			exclude "dev/upcraft/sparkweave/api/datagen/**"
+			exclude "dev/upcraft/sparkweave/api/color/**"
+			exclude "dev/upcraft/sparkweave/api/item/CreativeTabHelper.java"
+			exclude "dev/upcraft/sparkweave/api/registry/item/**"
+			exclude "dev/upcraft/sparkweave/api/client/event/RegisterBlockEntityRenderersEvent.java"
+			exclude "dev/upcraft/sparkweave/api/client/event/RegisterCustomArmorRenderersEvent.java"
+			exclude "dev/upcraft/sparkweave/api/client/event/RegisterItemPropertiesEvent.java"
+			exclude "dev/upcraft/sparkweave/api/client/event/RegisterParticleFactoriesEvent.java"
+			exclude "dev/upcraft/sparkweave/api/client/event/RegisterLecternItemRendererEvent.java"
+			exclude "dev/upcraft/sparkweave/api/client/Debug.java"
+			exclude "dev/upcraft/sparkweave/api/entrypoint/DataGenerationEntryPoint.java"
+			exclude "dev/upcraft/sparkweave/mixin/client/LecternRendererMixin.java"
+			exclude "dev/upcraft/sparkweave/mixin/client/RenderLayerMixin.java"
+			exclude "dev/upcraft/sparkweave/mixin/client/debug/**"
+			exclude "dev/upcraft/sparkweave/client/**"
+			exclude "dev/upcraft/sparkweave/command/**"
+			exclude "dev/upcraft/sparkweave/datagen/**"
+			exclude "dev/upcraft/sparkweave/registry/SparkweaveCommandArgumentTypes.java"
+			exclude "dev/upcraft/sparkweave/util/SparkweaveDevCreativeTab.java"
+		}
+	}
 }
 
 dependencies {
@@ -36,11 +63,6 @@ dependencies {
 }
 
 neoForge {
-	parchment {
-		minecraftVersion = libs.versions.parchment.minecraft.get()
-		mappingsVersion = libs.versions.parchment.mappings.get()
-	}
-
 	accessTransformers {
 		def atFile = file("src/main/resources/META-INF/accesstransformer.cfg")
 		from atFile

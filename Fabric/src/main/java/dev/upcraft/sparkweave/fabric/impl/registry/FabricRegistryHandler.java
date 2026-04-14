@@ -5,11 +5,9 @@ import dev.upcraft.sparkweave.api.registry.RegistryHandler;
 import dev.upcraft.sparkweave.api.registry.RegistryHelper;
 import dev.upcraft.sparkweave.api.registry.RegistrySupplier;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
-import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -25,7 +23,7 @@ public class FabricRegistryHandler<T> implements RegistryHandler<T> {
 	private final String namespace;
 	private final Supplier<Registry<T>> registry;
 
-	private final Map<ResourceLocation, RegistrySupplier<? extends T>> values = new Object2ObjectOpenHashMap<>();
+	private final Map<Identifier, RegistrySupplier<? extends T>> values = new Object2ObjectOpenHashMap<>();
 	private final List<RegistrySupplier<? extends T>> orderedEntries = new LinkedList<>();
 
 	private FabricRegistryHandler(ResourceKey<Registry<T>> registryKey, String namespace) {
@@ -40,13 +38,13 @@ public class FabricRegistryHandler<T> implements RegistryHandler<T> {
 
 	@Override
 	public <S extends T> FabricRegistrySupplier<T, S> register(String name, Supplier<S> factory) {
-		var id = ResourceKey.create(registryKey, ResourceLocation.fromNamespaceAndPath(namespace, name));
+		var id = ResourceKey.create(registryKey, Identifier.fromNamespaceAndPath(namespace, name));
 		return register(id, factory);
 	}
 
 	@Override
 	public <S extends T> FabricRegistrySupplier<T, S> register(ResourceKey<T> id, Supplier<S> factory) {
-		if (!this.namespace.equals(id.location().getNamespace())) {
+		if (!this.namespace.equals(id.identifier().getNamespace())) {
 			throw new IllegalArgumentException("Cannot register %s because namespace does not match the expected value %s".formatted(id, this.namespace));
 		}
 
@@ -55,13 +53,13 @@ public class FabricRegistryHandler<T> implements RegistryHandler<T> {
 		// immediately register entry
 		supplier.register(registry.get());
 
-		values.put(id.location(), supplier);
+		values.put(id.identifier(), supplier);
 		orderedEntries.add(supplier);
 		return supplier;
 	}
 
 	@Override
-	public Map<ResourceLocation, RegistrySupplier<? extends T>> values() {
+	public Map<Identifier, RegistrySupplier<? extends T>> values() {
 		return Collections.unmodifiableMap(values);
 	}
 
@@ -81,11 +79,7 @@ public class FabricRegistryHandler<T> implements RegistryHandler<T> {
 	}
 
 	@Override
-	public Registry<T> createNewRegistry(boolean sync, @Nullable ResourceLocation defaultEntry) {
-		var builder = defaultEntry != null ? FabricRegistryBuilder.createDefaulted(this.registryKey, defaultEntry) : FabricRegistryBuilder.createSimple(this.registryKey);
-		if(sync) {
-			builder.attribute(RegistryAttribute.SYNCED);
-		}
-		return builder.buildAndRegister();
+	public Registry<T> createNewRegistry(boolean sync, @Nullable Identifier defaultEntry) {
+		throw new UnsupportedOperationException("Custom dynamic registries are not supported in the stripped 26.1 Sparkweave build.");
 	}
 }
