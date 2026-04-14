@@ -40,7 +40,7 @@ jobs:
       - name: Build with Gradle
         env:
           BUILD_TIME: ${{ steps.current-time.outputs.formattedTime }}
-        run: ./gradlew :Sparkweave-Common:assemble :Sparkweave-Fabric:assemble --rerun-tasks
+        run: ./gradlew :Sparkweave-Common:assemble :Sparkweave-Fabric:assemble -x javadoc -x javadocJar --rerun-tasks
 
       # Upload
       - name: Upload build artifacts (Common)
